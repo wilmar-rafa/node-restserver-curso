@@ -1,9 +1,10 @@
 
 require('./config/config');
 
-const express = require('express');
-const app = express();
 
+const express = require('express');
+const mongoose = require('mongoose');
+const app = express();
 const bodyParser= require('body-parser');
 
 // parse application/x-www-form-urlencoded
@@ -12,38 +13,31 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
 app.use(bodyParser.json());
  
-app.get('/usuario', function (req, res) {
-  res.json('get Usuario')
+app.use(require('./routes/usuario.js'));
+
+// mongoose.connect('mongodb://localhost:27017/test', {useNewUrlParser: true, useUnifiedTopology: true});
+
+    /*{
+        useNewUrlParser: true,
+        useCreateIndex: true,
+        useFindAndModify: false
+    }*/
+//mongodb://wilmarrafa:holaMundo1@cluster0-shard-00-00-fzxp9.mongodb.net:27017,cluster0-shard-00-01-fzxp9.mongodb.net:27017,cluster0-shard-00-02-fzxp9.mongodb.net:27017/test?replicaSet=Cluster0-shard-0&ssl=true&authSource=admin
+//mongodb+srv://wilmarrafa:<password>@cluster0-fzxp9.mongodb.net/test
+//mongodb+srv://strider:<password>@cluster0-em3uv.mongodb.net/cafe?retryWrites=true&w=majority
+//mongodb+srv://wilmarrafa:holaMundo1@cluster0-fzxp9.mongodb.net/cafe 
+//holaMundo1   
+//mongoose.connect('mongodb://localhost:27017/cafe',{
+mongoose.connect(process.env.URLDB,{
+        useNewUrlParser: true, 
+        useUnifiedTopology: true,
+        useCreateIndex: true,
+        useFindAndModify: false
+},(err,res)=>{
+    if (err) throw 'Error Capturado:'+err;
+
+    console.log('Conexion BD online');
 });
-
-app.post('/usuario', function (req, res) {
-
-    let body = req.body;
-
-    if (body.nombre===undefined){
-        res.status(400).json({
-            ok:         false,
-            mensaje:    'el nombre es necesario'
-        });
-    }else{
-        res.json({
-            persona:body
-        })
-    }
-
-  });
-
-  app.put('/usuario/:id', function (req, res) {
-      let id = req.params.id;
-    res.json({
-        id
-    });
-  });
-
-  app.delete('/usuario', function (req, res) {
-    res.json('delete Usuario');
-  });
-
 
  
 app.listen(process.env.PORT, ()=>{
