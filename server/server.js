@@ -13,7 +13,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
 app.use(bodyParser.json());
  
-app.use(require('./routes/usuario.js'));
+////configuracion global de rutas
+app.use(require('./routes/index.js'));
 
 // mongoose.connect('mongodb://localhost:27017/test', {useNewUrlParser: true, useUnifiedTopology: true});
 

@@ -6,14 +6,22 @@ const _ = require('underscore');
 
 const Usuario = require('../models/usuario.js');
 
+const {verificaToken,verificaAdmin_Rol} = require('../middlewares/autentication.js');
+
 
 const app = express();
 
 
 
-app.get('/usuario', function (req, res) {
+app.get('/usuario',verificaToken, function (req, res) {
     //res.json('get Usuario')
-
+/*
+    return res.json({
+        usuario:req.usuario,
+        nombe:req.usuario.nombre,
+        email: req.usuario.email
+    });
+*/
     let desde = req.query.desde || 0;
     desde     = Number(desde);
 
@@ -37,7 +45,7 @@ app.get('/usuario', function (req, res) {
         }
 
         //Usuario.count({google:true},(err,conteo)=>{
-        Usuario.count(filter,(err,conteo)=>{
+        Usuario.countDocuments(filter,(err,conteo)=>{
 
             res.json({
                 ok : true,
@@ -52,7 +60,7 @@ app.get('/usuario', function (req, res) {
 
   });
   
-  app.post('/usuario', function (req, res) {
+  app.post('/usuario',[verificaToken,verificaAdmin_Rol], function (req, res) {
         let body = req.body;
 
         let usuario = new Usuario({
@@ -94,7 +102,7 @@ app.get('/usuario', function (req, res) {
   
     });
   
-    app.put('/usuario/:id', function (req, res) {
+    app.put('/usuario/:id',[verificaToken,verificaAdmin_Rol], function (req, res) {
         let id = req.params.id;
         let body = _.pick(req.body,['nombre','email','img','rol','estado']);
         //let body = req.body;
@@ -103,7 +111,7 @@ app.get('/usuario', function (req, res) {
         //new=>define si devuelve el nuevo objeto actualizado
         //runValidators=> para que haga todas las validaciones del modelo
 
-        Usuario.findByIdAndUpdate(id,body,{new:true,runValidators:false},(err,usuarioBD)=>{
+        Usuario.findByIdAndUpdate(id,body,{new:true,runValidators:true},(err,usuarioBD)=>{
 
             if (err){
                 return res.status(400).json({
@@ -122,7 +130,7 @@ app.get('/usuario', function (req, res) {
       
     });
   
-    app.delete('/usuario/:id', function (req, res) {
+    app.delete('/usuario/:id',[verificaToken,verificaAdmin_Rol], function (req, res) {
       //res.json('delete Usuario');
       let id = req.params.id;
       
